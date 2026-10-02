@@ -5,4 +5,27 @@ backend:
 media_folder: "images"
 public_folder: "/images"
 
-collections: []
+collections:
+  - name: "content"
+    label: "محتوا"
+    files:
+      - file: "content/content.yml"
+        label: "نوشته‌ها، عکس‌ها و ویدیوها"
+        name: "content"
+        fields:
+          - label: "نوشته"
+            name: "text"
+            widget: "text"
+
+          - label: "عکس"
+            name: "image"
+            widget: "image"
+            required: false
+
+          - label: "ویدیو"
+            name: "video"
+            widget: "file"
+            required: false
+            media_library:
+              config:
+                multiple: false

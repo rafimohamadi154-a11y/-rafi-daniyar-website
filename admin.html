@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rafi Daniyar - Admin</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -17,88 +15,119 @@
       color: #1d1d1f;
     }
 
-    .header {
-      background: #ffffff;
-      padding: 25px;
-      border-bottom: 1px solid #ddd;
+    .box {
+      max-width: 500px;
+      margin: 80px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    }
+
+    h1 {
       text-align: center;
     }
 
-    .header h1 {
-      margin: 0;
-      font-size: 28px;
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
     }
 
-    .header p {
-      margin: 8px 0 0;
-      color: #777;
+    input {
+      border: 1px solid #ddd;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.06);
-    }
-
-    .card h2 {
-      margin-top: 0;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 12px 20px;
+    button {
+      border: none;
       background: #0071e3;
       color: white;
-      border-radius: 10px;
-      text-decoration: none;
-      border: none;
       cursor: pointer;
-      font-size: 15px;
     }
 
-    .button:hover {
-      background: #005bb5;
+    #panel {
+      display: none;
+    }
+
+    #error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="header">
-    <h1>Rafi Daniyar</h1>
-    <p>پنل مدیریت سایت</p>
+  <div class="box" id="login">
+    <h1>ورود مدیر</h1>
+
+    <input id="email" type="email" placeholder="ایمیل مدیر">
+    <input id="password" type="password" placeholder="رمز عبور">
+
+    <button onclick="login()">ورود به پنل</button>
+
+    <div id="error"></div>
   </div>
 
-  <div class="container">
+  <div class="box" id="panel">
+    <h1>پنل مدیریت Rafi Daniyar</h1>
+    <p>با موفقیت وارد شدید.</p>
 
-    <div class="card">
-      <h2>داشبورد</h2>
-      <p>به پنل مدیریت سایت خوش آمدید.</p>
-    </div>
-
-    <div class="card">
-      <h2>مدیریت محتوا</h2>
-      <p>از این بخش می‌توانیم محتوای سایت را مدیریت کنیم.</p>
-
-      <button class="button" onclick="alert('بخش مدیریت محتوا در حال ساخت است')">
-        مدیریت محتوا
-      </button>
-    </div>
-
-    <div class="card">
-      <h2>تنظیمات</h2>
-      <p>این بخش در مرحله بعد تکمیل می‌شود.</p>
-    </div>
-
+    <button onclick="logout()">خروج</button>
   </div>
+
+<script>
+const SUPABASE_URL = "https://wyiyxlsoiontiodvkrer.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_hXfkZZi12uGcKclV8jo2fw_dDZ3WA81";
+  
+
+  const supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      document.getElementById("error").innerText = error.message;
+      return;
+    }
+
+    showPanel();
+  }
+
+  async function logout() {
+    await supabaseClient.auth.signOut();
+    document.getElementById("panel").style.display = "none";
+    document.getElementById("login").style.display = "block";
+  }
+
+  function showPanel() {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("panel").style.display = "block";
+  }
+
+  async function checkUser() {
+    const { data } = await supabaseClient.auth.getSession();
+
+    if (data.session) {
+      showPanel();
+    }
+  }
+
+  checkUser();
+</script>
 
 </body>
 </html>
